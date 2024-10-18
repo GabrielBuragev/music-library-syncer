@@ -1,0 +1,16 @@
+{
+  "name": "sound-library-sync",
+  "version": "1.0.0",
+  "description": "Syncer for my music library",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^22.7.6",
+    "dotenv": "^16.4.5",
+    "typescript": "^5.6.3"
+  }
+}
