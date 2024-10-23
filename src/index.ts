@@ -1,4 +1,3 @@
-import * as fs from "fs";
 import { config } from "dotenv";
 import assert from "assert";
 import { sync } from "./sync";
@@ -12,11 +11,11 @@ const main = async () => {
 
   const spotdlConfigFilePaths = getSpotdlFilePaths(MUSIC_DIR);
 
-  //   for (const configFilePath of spotdlConfigFilePaths) {
-  //     await sync(SPOTDL_BINARY, configFilePath);
-  //   }
-  await sync(SPOTDL_BINARY);
-  console.log(1);
+  for (const configFilePath of spotdlConfigFilePaths) {
+    await sync(SPOTDL_BINARY, configFilePath);
+  }
+  // await sync(SPOTDL_BINARY);
+
   process.exit();
 };
 
