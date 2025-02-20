@@ -23,3 +23,17 @@ export const getSpotdlFilePaths = (rootFolder: string): string[] => {
     })
     .filter((file) => file) as string[];
 };
+
+export const readPlaylistFile = (
+  filePath: string
+): [name: string, playlistUrl: string][] => {
+  const fileContent = fs.readFileSync(filePath, "utf-8");
+  const lines = fileContent
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0);
+
+  return lines.map(
+    (line) => line.split(",").map((part) => part.trim()) as [string, string]
+  );
+};

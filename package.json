@@ -4,7 +4,9 @@
   "description": "Syncer for my music library",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "sync": "pnpm tsx ./src/sync/index.ts",
+    "initialize": "pnpm tsx ./src/init/index.ts"
   },
   "author": "",
   "license": "ISC",
