@@ -25,6 +25,8 @@ export const sync = async (binaryPath: string, configFilePath: string) => {
       "--sync-without-deleting",
       "--output",
       dlOutputFolder,
+      "--bitrate",
+      "128k",
     ];
 
     const ls = spawn(cmd, cmdArgs);

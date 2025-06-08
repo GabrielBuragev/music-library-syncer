@@ -97,8 +97,10 @@ const main = async () => {
 
 process.on("unhandledRejection", (error) => {
   console.log(error);
+  process.exit();
 });
 
 process.on("uncaughtException", (error) => {
   console.log(error);
+  process.exit();
 });
