@@ -20,6 +20,9 @@ importers:
       typescript:
         specifier: ^5.6.3
         version: 5.6.3
+      ytdlp-nodejs:
+        specifier: ^3.4.4
+        version: 3.4.4
 
 packages:
 
@@ -215,6 +218,11 @@ packages:
   undici-types@6.19.8:
     resolution: {integrity: sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw==}
 
+  ytdlp-nodejs@3.4.4:
+    resolution: {integrity: sha512-PR2nQOtyOzSuSQpWf6SHD97d6qlcfY2y6CVCeYnuDacYDc1YzNLXYiqAyIpFWk13UUrtQN+XD35h5DERli3SXQ==}
+    engines: {node: '>=16.0.0'}
+    hasBin: true
+
 snapshots:
 
   '@esbuild/aix-ppc64@0.27.1':
@@ -349,3 +357,5 @@ snapshots:
   typescript@5.6.3: {}
 
   undici-types@6.19.8: {}
+
+  ytdlp-nodejs@3.4.4: {}

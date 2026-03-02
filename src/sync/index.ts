@@ -4,17 +4,16 @@ import { config } from "dotenv";
 import { getSpotdlFilePaths } from "../utils";
 config();
 import assert from "assert";
-import { spawn } from "child_process";
 import fs from "fs";
 import path from "path";
+import { YtDlp } from "ytdlp-nodejs";
 
-const { MUSIC_DIR } = process.env;
+const { MUSIC_DIR, YTDLP_BINARY } = process.env;
 
-const FFMPEG = path.join(
-  process.env.HOME!,
-  ".spotdl",
-  "ffmpeg"
-);
+const ytdlp = new YtDlp({
+  binaryPath: YTDLP_BINARY,
+  ffmpegPath: path.join(process.env.HOME!, ".spotdl", "ffmpeg"),
+});
 
 interface Song {
   name: string;
@@ -26,12 +25,6 @@ interface Song {
   url: string;
 }
 
-const spawnAsync = (cmd: string, args: string[]): Promise<number> =>
-  new Promise((resolve) => {
-    const proc = spawn(cmd, args, { stdio: "inherit" });
-    proc.on("close", resolve);
-  });
-
 export const downloadSong = async (song: Song, outputFolder: string): Promise<void> => {
   const safeTitle = `${song.artist} - ${song.name}`.replace(/[/\\:*?"<>|]/g, "_");
   const outputPath = path.join(outputFolder, `${safeTitle}.mp3`);
@@ -41,30 +34,24 @@ export const downloadSong = async (song: Song, outputFolder: string): Promise<vo
     return;
   }
 
-  const searchQuery = `ytsearch:${song.name} ${song.artist}`;
   console.log(`⏬ Downloading: ${safeTitle}`);
 
-  const code = await spawnAsync("yt-dlp", [
-    searchQuery,
-    "--extract-audio",
-    "--audio-format", "mp3",
-    "--audio-quality", "128K",
-    "--ffmpeg-location", FFMPEG,
-    "--output", outputPath,
-    "--add-metadata",
-    "--parse-metadata", `${song.name}:%(meta_title)s`,
-    "--parse-metadata", `${song.artist}:%(meta_artist)s`,
-    "--parse-metadata", `${song.album_name}:%(meta_album)s`,
-    "--parse-metadata", `${song.year}:%(meta_date)s`,
-    "--no-playlist",
-    "--quiet",
-    "--progress",
-  ]);
+  try {
+    await ytdlp
+      .download(`ytsearch:${song.name} ${song.artist}`)
+      .extractAudio()
+      .audioFormat("mp3")
+      .audioQuality("5")
+      .setOutputTemplate(outputPath.replace(/\.mp3$/, ".%(ext)s"))
+      .addOption("--no-playlist")
+      .on("progress", (p) => process.stdout.write(`\r   ${p.percentage_str} at ${p.speed_str} ETA ${p.eta_str}   `))
+      .on("finish", () => process.stdout.write("\n"))
+      .run();
 
-  if (code !== 0) {
-    console.error(`❌ Failed: ${safeTitle} (exit code ${code})`);
-  } else {
     console.log(`✅ Downloaded: ${safeTitle}`);
+  } catch (err) {
+    process.stdout.write("\n");
+    console.error(`❌ Failed: ${safeTitle}`, err);
   }
 };
 
@@ -84,6 +71,7 @@ export const sync = async (configFilePath: string): Promise<void> => {
 
 const main = async () => {
   assert(MUSIC_DIR, "process.env.MUSIC_DIR is not set");
+  assert(YTDLP_BINARY, "process.env.YTDLP_BINARY is not set");
 
   const spotdlConfigFilePaths = getSpotdlFilePaths(MUSIC_DIR);
 
