@@ -37,12 +37,12 @@ export const downloadSong = async (song: Song, outputFolder: string): Promise<vo
   const outputPath = path.join(outputFolder, `${safeTitle}.mp3`);
 
   if (fs.existsSync(outputPath)) {
-    console.log(`Skipping (exists): ${safeTitle}`);
+    console.log(`⏭️  Skipping (exists): ${safeTitle}`);
     return;
   }
 
   const searchQuery = `ytsearch:${song.name} ${song.artist}`;
-  console.log(`Downloading: ${safeTitle}`);
+  console.log(`⏬ Downloading: ${safeTitle}`);
 
   const code = await spawnAsync("yt-dlp", [
     searchQuery,
@@ -62,7 +62,9 @@ export const downloadSong = async (song: Song, outputFolder: string): Promise<vo
   ]);
 
   if (code !== 0) {
-    console.error(`Failed to download: ${safeTitle} (exit code ${code})`);
+    console.error(`❌ Failed: ${safeTitle} (exit code ${code})`);
+  } else {
+    console.log(`✅ Downloaded: ${safeTitle}`);
   }
 };
 
