@@ -5,6 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "rename-folders": "pnpm tsx ./src/rename-folders/index.ts",
+    "pull-playlists": "pnpm tsx ./src/pull-playlists/index.ts",
     "sync": "pnpm tsx ./src/sync/index.ts",
     "initialize": "pnpm tsx ./src/init/index.ts"
   },
