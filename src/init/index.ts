@@ -5,7 +5,7 @@ import { spawn } from "child_process";
 import fs from "fs";
 config();
 
-const { SPOTDL_BINARY, MUSIC_DIR, INIT_FILE } = process.env;
+const { SPOTDL_BINARY, MUSIC_DIR, INIT_FILE, SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET } = process.env;
 
 export const initPlaylist = async ({
   binaryPath,
@@ -23,7 +23,7 @@ export const initPlaylist = async ({
 
   return new Promise<void>((resolve, reject) => {
     const outputFilePath = `${outDir}/${playlistName}/meta.spotdl`;
-    const cmdArgs = ["save", playlistUrl, "--save-file", outputFilePath];
+    const cmdArgs = ["save", playlistUrl, "--save-file", outputFilePath, "--client-id", SPOTIFY_CLIENT_ID, "--client-secret", SPOTIFY_CLIENT_SECRET, "--user-auth"];
 
     if (!fs.existsSync(`${outDir}/${playlistName}`)) {
       fs.mkdirSync(`${outDir}/${playlistName}`);
@@ -35,12 +35,11 @@ export const initPlaylist = async ({
     console.log(`> ${binaryPath} ${cmdArgs.join(" ")}\n`);
 
     ls.stdout.on("data", (data) => {
-      const msg = String(data);
+      process.stdout.write(String(data));
+    });
 
-      if (msg.match(/Found [0-9]+ songs/g)) return console.log(msg);
-      if (msg.match(/ConnectionError:/g)) return console.log(msg);
-
-      console.log(`STDOUT: ${msg}`);
+    ls.stderr.on("data", (data) => {
+      process.stderr.write(String(data));
     });
 
     ls.on("close", (code) => {
@@ -63,6 +62,8 @@ export const initPlaylist = async ({
 const main = async () => {
   assert(MUSIC_DIR, "process.env.MUSIC_DIR is not set");
   assert(INIT_FILE, "process.env.INIT_FILE is not set");
+  assert(SPOTIFY_CLIENT_ID, "process.env.SPOTIFY_CLIENT_ID is not set");
+  assert(SPOTIFY_CLIENT_SECRET, "process.env.SPOTIFY_CLIENT_SECRET is not set");
 
   const spotifyPlaylistUrls = readPlaylistFile(INIT_FILE);
 
